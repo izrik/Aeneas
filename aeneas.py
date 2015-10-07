@@ -29,13 +29,17 @@ if __name__ == '__main__':
     print('AENEAS_PORT: {}'.format(AENEAS_PORT))
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--debug', help='Run Flask in debug mode, with '
-                                        'auto-reload and debugger page on '
-                                        'errors.',
-                        action='store_true', default=AENEAS_DEBUG)
-    parser.add_argument('--port', help='The port on which to accept incoming '
-                                       'HTTP requests. Default is {}.'.format(
-                                            AENEAS_PORT),
+    parser.add_argument('--debug',
+                        help='Run Flask in debug mode, with auto-reload and '
+                             'debugger page on errors. Default is {}. '
+                             'Environment variable is AENEAS_DEBUG.'.format(
+                                AENEAS_DEBUG),
+                        action='store_true',
+                        default=AENEAS_DEBUG)
+    parser.add_argument('--port',
+                        help='The port on which to accept incoming HTTP '
+                             'requests. Default is {}. Environment variables '
+                             'is AENEAS_PORT.'.format(AENEAS_PORT),
                         action='store', default=AENEAS_PORT, type=int)
 
     args = parser.parse_args()
