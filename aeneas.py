@@ -31,7 +31,7 @@ if __name__ == '__main__':
                                         'errors.',
                         action='store_true', default=AENEAS_DEBUG)
     parser.add_argument('--port', help='The port on which to accept incoming '
-                                       'HTTP requests. Default is {}'.format(
+                                       'HTTP requests. Default is {}.'.format(
                                             AENEAS_PORT),
                         action='store', default=AENEAS_PORT, type=int)
 
