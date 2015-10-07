@@ -25,6 +25,9 @@ except:
 
 
 if __name__ == '__main__':
+    print('AENEAS_DEBUG: {}'.format(AENEAS_DEBUG))
+    print('AENEAS_PORT: {}'.format(AENEAS_PORT))
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--debug', help='Run Flask in debug mode, with '
                                         'auto-reload and debugger page on '
