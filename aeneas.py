@@ -2,6 +2,7 @@
 
 import argparse
 from os import environ
+from flask import Flask
 
 
 def bool_from_str(s):
@@ -24,9 +25,18 @@ except:
     AENEAS_PORT = DEFAULT_AENEAS_PORT
 
 
+def generate_app():
+
+    app = Flask(__name__)
+
+    @app.route('/v1.0/reports', methods=['POST'])
+    def submit_report():
+        return '', 501
+
+    return app
+
+
 if __name__ == '__main__':
-    print('AENEAS_DEBUG: {}'.format(AENEAS_DEBUG))
-    print('AENEAS_PORT: {}'.format(AENEAS_PORT))
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--debug',
@@ -44,4 +54,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print('aeneas.py')
+    print('Debug: {}'.format(args.debug))
+    print('Port: {}'.format(args.port))
+
+    app = generate_app()
+    app.run(debug=args.debug, port=args.port)
