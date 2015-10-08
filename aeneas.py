@@ -32,6 +32,7 @@ def generate_app(db_uri=AENEAS_DB_URI):
 
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.config['MAX_CONTENT_LENGTH'] = 4000
     db = app.db = SQLAlchemy(app)
 
     class Report(db.Model):
