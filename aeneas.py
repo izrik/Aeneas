@@ -41,11 +41,13 @@ def generate_app(db_uri=AENEAS_DB_URI):
         raw = db.Column(db.String(4000))
         product = db.Column(db.String(100))
         version = db.Column(db.String(100))
+        version = db.Column(db.String(1000))
 
-        def __init__(self, raw, product, version):
+        def __init__(self, raw, product, version, stacktrace):
             self.raw = raw
             self.product = product
             self.version = version
+            self.stacktrace = stacktrace
 
     @app.route('/v1.0/reports', methods=['POST'])
     def submit_report():
@@ -67,7 +69,13 @@ def generate_app(db_uri=AENEAS_DB_URI):
         if not isinstance(version, basestring):
             return 'Version is wrong type', 400
 
-        report = Report(raw, product, version)
+        if 'stacktrace' not in report_json:
+            return 'No stacktrace specified', 400
+        stacktrace = report_json['stacktrace']
+        if not isinstance(stacktrace, basestring):
+            return 'Stacktrace is wrong type', 400
+
+        report = Report(raw, product, version, stacktrace)
         db.session.add(report)
         db.session.commit()
         return '', 201
