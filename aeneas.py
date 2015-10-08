@@ -3,6 +3,7 @@
 import argparse
 from os import environ
 from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
 
 
 def bool_from_str(s):
@@ -24,10 +25,14 @@ try:
 except:
     AENEAS_PORT = DEFAULT_AENEAS_PORT
 
+AENEAS_DB_URI = environ.get('AENEAS_DB_URI', 'sqlite://')
 
-def generate_app():
+
+def generate_app(db_uri=AENEAS_DB_URI):
 
     app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.db = SQLAlchemy(app)
 
     @app.route('/v1.0/reports', methods=['POST'])
     def submit_report():
@@ -51,11 +56,25 @@ if __name__ == '__main__':
                              'requests. Default is {}. Environment variables '
                              'is AENEAS_PORT.'.format(AENEAS_PORT),
                         action='store', default=AENEAS_PORT, type=int)
+    parser.add_argument('--db-uri',
+                        help='The URI for the database, to be passed to '
+                             'SQLAlchemy. Default is {}. Environment variable '
+                             'is AENEAS_DB_URI.'.format(AENEAS_DB_URI),
+                        action='store', default=AENEAS_DB_URI)
+    parser.add_argument('--create-db', help='Initialize the database schema '
+                                            'and then exit.',
+                        action='store_true')
 
     args = parser.parse_args()
 
     print('Debug: {}'.format(args.debug))
     print('Port: {}'.format(args.port))
+    print('DB URI: {}'.format(args.db_uri))
 
-    app = generate_app()
-    app.run(debug=args.debug, port=args.port)
+    app = generate_app(db_uri=args.db_uri)
+
+    if args.create_db:
+        print('Setting up the database')
+        app.db.create_all()
+    else:
+        app.run(debug=args.debug, port=args.port)

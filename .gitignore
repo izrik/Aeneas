@@ -63,3 +63,6 @@ target/
 # virtualenv
 Include
 Scripts
+
+# SQLite test database
+test.db
