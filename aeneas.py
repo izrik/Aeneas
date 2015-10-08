@@ -4,6 +4,7 @@ import argparse
 from os import environ
 from flask import Flask, request
 from flask.ext.sqlalchemy import SQLAlchemy
+import json
 
 
 def bool_from_str(s):
@@ -38,9 +39,13 @@ def generate_app(db_uri=AENEAS_DB_URI):
     class Report(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         raw = db.Column(db.String(4000))
+        product = db.Column(db.String(100))
+        version = db.Column(db.String(100))
 
-        def __init__(self, raw):
+        def __init__(self, raw, product, version):
             self.raw = raw
+            self.product = product
+            self.version = version
 
     @app.route('/v1.0/reports', methods=['POST'])
     def submit_report():
@@ -48,7 +53,21 @@ def generate_app(db_uri=AENEAS_DB_URI):
             return ('Content-Type was "{}", but only "application/json" is '
                     'supported.'.format(request.content_type), 415)
         raw = request.data
-        report = Report(raw)
+        report_json = request.json
+
+        if 'product' not in report_json:
+            return 'No product specified', 400
+        product = report_json['product']
+        if not isinstance(product, basestring):
+            return 'Product is wrong type', 400
+
+        if 'version' not in report_json:
+            return 'No version specified', 400
+        version = report_json['version']
+        if not isinstance(version, basestring):
+            return 'Version is wrong type', 400
+
+        report = Report(raw, product, version)
         db.session.add(report)
         db.session.commit()
         return '', 201
