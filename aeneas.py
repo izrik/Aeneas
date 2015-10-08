@@ -32,7 +32,14 @@ def generate_app(db_uri=AENEAS_DB_URI):
 
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-    app.db = SQLAlchemy(app)
+    db = app.db = SQLAlchemy(app)
+
+    class Report(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        raw = db.Column(db.String(4000))
+
+        def __init__(self, raw):
+            self.raw = raw
 
     @app.route('/v1.0/reports', methods=['POST'])
     def submit_report():
