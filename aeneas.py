@@ -2,7 +2,7 @@
 
 import argparse
 from os import environ
-from flask import Flask
+from flask import Flask, request
 from flask.ext.sqlalchemy import SQLAlchemy
 
 
@@ -43,7 +43,14 @@ def generate_app(db_uri=AENEAS_DB_URI):
 
     @app.route('/v1.0/reports', methods=['POST'])
     def submit_report():
-        return '', 501
+        if request.content_type == 'application/x-www-form-urlencoded':
+            raw = request.form.keys()[0]
+        else:
+            raw = request.data
+        report = Report(raw)
+        db.session.add(report)
+        db.session.commit()
+        return '', 201
 
     return app
 
