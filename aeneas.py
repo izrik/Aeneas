@@ -38,9 +38,9 @@ def generate_app(db_uri=AENEAS_DB_URI):
 
     class Report(db.Model):
         id = db.Column(db.Integer, primary_key=True)
-        raw = db.Column(db.String(4000))
-        product = db.Column(db.String(100))
-        version = db.Column(db.String(100))
+        raw = db.Column(db.String(4000), nullable=False)
+        product = db.Column(db.String(100), nullable=False)
+        version = db.Column(db.String(100), nullable=False)
 
         def __init__(self, raw, product, version):
             self.raw = raw
