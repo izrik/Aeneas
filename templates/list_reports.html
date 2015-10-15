@@ -1,0 +1,26 @@
+{% extends "base.t.html" %}
+{% block content scoped %}
+<div>
+    <table class="reports">
+        {% set odd_even = cycle(['odd', 'even']).next %}
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Product</th>
+            <th>Version</th>
+        </tr>
+        </thead>
+        {% for report in reports %}
+        <tr class="{{ odd_even() }}">
+            <td>{{report.id}}</td>
+            <td>
+                <!--a href="{ { url_for('view_report', id=task.id) }}"-->{{ report.product }}<!--/a-->
+            </td>
+            <td>
+                <!--a href="{ { url_for('view_report', id=task.id) }}"-->{{ report.version }}<!--/a-->
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

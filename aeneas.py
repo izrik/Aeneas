@@ -2,9 +2,10 @@
 
 import argparse
 from os import environ
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 import json
+import itertools
 
 
 def bool_from_str(s):
@@ -71,6 +72,27 @@ def generate_app(db_uri=AENEAS_DB_URI):
         db.session.add(report)
         db.session.commit()
         return '', 201
+
+    @app.route('/v1.0/reports', methods=['GET'])
+    def list_reports():
+        best = request.accept_mimetypes.best_match(['application/json',
+                                                    'text/html'])
+        if (best == 'text/html' and request.accept_mimetypes[best] >=
+                request.accept_mimetypes['application/json']):
+            accept = 'html'
+        elif (best == 'application/json' and request.accept_mimetypes[best] >=
+                request.accept_mimetypes['text/html']):
+            accept = 'json'
+        else:
+            return '', 406
+
+        reports = Report.query.all()
+
+        if accept == 'html':
+            return render_template('list_reports.html', reports=reports,
+                                   cycle=itertools.cycle)
+        else:
+            return json.dumps(reports), 200
 
     return app
 

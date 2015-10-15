@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block head %}
+    <link rel="stylesheet" href="../static/aeneas.css" />
+    <title>{% block title %}Error Reports - Aeneas{% endblock %}</title>
+    {% endblock %}
+</head>
+<body>
+    <div id="header">
+        {% block header %}
+        {% endblock %}
+    </div>
+    {% block content %}{% endblock %}
+    <div id="footer">
+        {% block footer %}
+            <small>Aeneas is &copy; Copyright 2015 by <a href="http://metaindu.com/">metaindu</a> and <a href="http://izrik.com">izrik</a>.</small>
+        {% endblock %}
+    </div>
+</body>
+</html>

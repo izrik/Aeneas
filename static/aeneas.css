@@ -1,0 +1,18 @@
+
+table {
+    border-collapse: collapse;
+}
+th, td {
+    padding: 3px;
+}
+thead {
+    background-color: #d0d0d0;
+}
+
+.reports .odd {
+    background-color: #f0f0f0;
+}
+
+.reports .even {
+    background-color: #e0e0e0;
+}
