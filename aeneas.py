@@ -6,6 +6,8 @@ from flask import Flask, request, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 import json
 import itertools
+import datetime
+from dateutil.parser import parse as dparse
 
 
 def bool_from_str(s):
@@ -42,17 +44,25 @@ def generate_app(db_uri=AENEAS_DB_URI):
         raw = db.Column(db.String(4000), nullable=False)
         product = db.Column(db.String(100), nullable=False)
         version = db.Column(db.String(100), nullable=False)
+        timestamp = db.Column(db.DateTime, nullable=False)
 
-        def __init__(self, raw, product, version):
+        def __init__(self, raw, product, version, timestamp=None):
             self.raw = raw
             self.product = product
             self.version = version
+            if timestamp == None:
+                timestamp = datetime.datetime.utcnow()
+            if isinstance(timestamp, basestring):
+                timestamp = dparse(timestamp)
+            self.timestamp = timestamp
+
 
         def to_dict(self):
             return {'id': self.id,
                     'raw': self.raw,
                     'product': self.product,
-                    'version': self.version}
+                    'version': self.version,
+                    'timestamp': self.timestamp}
 
     @app.route('/v1.0/reports', methods=['POST'])
     def submit_report():

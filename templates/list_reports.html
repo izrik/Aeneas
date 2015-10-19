@@ -8,16 +8,20 @@
             <th>Id</th>
             <th>Product</th>
             <th>Version</th>
+            <th>Timestamp</th>
         </tr>
         </thead>
         {% for report in reports %}
         <tr class="{{ odd_even() }}">
-            <td>{{report.id}}</td>
+            <td><a href="{{ url_for('show_report', id=report.id) }}">{{report.id}}</a></td>
             <td>
                 <a href="{{ url_for('show_report', id=report.id) }}">{{ report.product }}</a>
             </td>
             <td>
                 <a href="{{ url_for('show_report', id=report.id) }}">{{ report.version }}<!/a>
+            </td>
+            <td>
+                <a href="{{ url_for('show_report', id=report.id) }}">{{ report.timestamp }}<!/a>
             </td>
         </tr>
         {% endfor %}
