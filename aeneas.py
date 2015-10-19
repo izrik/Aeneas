@@ -79,17 +79,23 @@ def generate_app(db_uri=AENEAS_DB_URI):
         db.session.commit()
         return '', 201
 
-    @app.route('/v1.0/reports', methods=['GET'])
-    def list_reports():
+    def get_accept_type():
         best = request.accept_mimetypes.best_match(['application/json',
                                                     'text/html'])
         if (best == 'text/html' and request.accept_mimetypes[best] >=
                 request.accept_mimetypes['application/json']):
-            accept = 'html'
+            return 'html'
         elif (best == 'application/json' and request.accept_mimetypes[best] >=
                 request.accept_mimetypes['text/html']):
-            accept = 'json'
+            return 'json'
         else:
+            return None
+
+
+    @app.route('/v1.0/reports', methods=['GET'])
+    def list_reports():
+        accept = get_accept_type()
+        if accept is None:
             return '', 406
 
         reports = Report.query.all()
