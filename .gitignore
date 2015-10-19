@@ -66,3 +66,7 @@ Scripts
 
 # SQLite test database
 test.db
+
+# Scratch files
+_scratch*
+

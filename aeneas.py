@@ -48,6 +48,12 @@ def generate_app(db_uri=AENEAS_DB_URI):
             self.product = product
             self.version = version
 
+        def to_dict(self):
+            return {'id': self.id,
+                    'raw': self.raw,
+                    'product': self.product,
+                    'version': self.version}
+
     @app.route('/v1.0/reports', methods=['POST'])
     def submit_report():
         if request.content_type != 'application/json':
@@ -92,7 +98,7 @@ def generate_app(db_uri=AENEAS_DB_URI):
             return render_template('list_reports.html', reports=reports,
                                    cycle=itertools.cycle)
         else:
-            return json.dumps(reports), 200
+            return json.dumps([r.to_dict() for r in reports]), 200
 
     return app
 
