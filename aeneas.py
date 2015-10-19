@@ -101,6 +101,13 @@ def generate_app(db_uri=AENEAS_DB_URI):
             jreports = [dict(json.loads(r.raw), id=r.id) for r in reports]
             return json.dumps(jreports), 200
 
+    @app.route('/v1.0/reports/<int:id>', methods=['GET'])
+    def show_report(id):
+        report = Report.query.get(id)
+        if report is None:
+            return '', 404
+        return json.dumps(dict(json.loads(report.raw), id=report.id)), 200
+
     return app
 
 
