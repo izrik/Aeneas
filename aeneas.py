@@ -98,7 +98,8 @@ def generate_app(db_uri=AENEAS_DB_URI):
             return render_template('list_reports.html', reports=reports,
                                    cycle=itertools.cycle)
         else:
-            return json.dumps([r.to_dict() for r in reports]), 200
+            jreports = [dict(json.loads(r.raw), id=r.id) for r in reports]
+            return json.dumps(jreports), 200
 
     return app
 
