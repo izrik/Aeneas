@@ -14,10 +14,10 @@
         <tr class="{{ odd_even() }}">
             <td>{{report.id}}</td>
             <td>
-                <!--a href="{ { url_for('view_report', id=task.id) }}"-->{{ report.product }}<!--/a-->
+                <a href="{{ url_for('show_report', id=report.id) }}">{{ report.product }}</a>
             </td>
             <td>
-                <!--a href="{ { url_for('view_report', id=task.id) }}"-->{{ report.version }}<!--/a-->
+                <a href="{{ url_for('show_report', id=report.id) }}">{{ report.version }}<!/a>
             </td>
         </tr>
         {% endfor %}
