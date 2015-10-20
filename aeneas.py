@@ -87,6 +87,13 @@ def generate_app(db_uri=AENEAS_DB_URI):
         report = Report(raw, product, version)
         db.session.add(report)
         db.session.commit()
+
+        jraw = json.loads(raw)
+        jraw['id'] = report.id
+        report.raw = json.dumps(jraw)
+        db.session.add(report)
+        db.session.commit()
+
         return '', 201
 
     def get_accept_type():
@@ -113,7 +120,7 @@ def generate_app(db_uri=AENEAS_DB_URI):
             return render_template('list_reports.html', reports=reports,
                                    cycle=itertools.cycle)
         else:
-            jreports = [dict(json.loads(r.raw), id=r.id) for r in reports]
+            jreports = [json.loads(r.raw) for r in reports]
             return json.dumps(jreports), 200
 
     @app.route('/v1.0/reports/<int:id>', methods=['GET'])
@@ -128,14 +135,14 @@ def generate_app(db_uri=AENEAS_DB_URI):
         if accept == 'html':
             raw = json.dumps(json.loads(report.raw), indent=2)
             return render_template('show_report.html', report=report, raw=raw)
-        return json.dumps(dict(json.loads(report.raw), id=report.id)), 200
+        return report.raw, 200
 
     @app.route('/v1.0/reports/<int:id>/download', methods=['GET'])
     def download_report(id):
         report = Report.query.get(id)
         if report is None:
             return '', 404
-        return json.dumps(dict(json.loads(report.raw), id=report.id)), 200
+        return report.raw, 200
 
     return app
 
