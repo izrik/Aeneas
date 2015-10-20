@@ -2,7 +2,7 @@
 
 import argparse
 from os import environ
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 from flask.ext.sqlalchemy import SQLAlchemy
 import json
 import itertools
@@ -88,9 +88,7 @@ def generate_app(db_uri=AENEAS_DB_URI):
         db.session.add(report)
         db.session.commit()
 
-        jraw = json.loads(raw)
-        jraw['id'] = report.id
-        report.raw = json.dumps(jraw)
+        clean_up_report(report)
         db.session.add(report)
         db.session.commit()
 
@@ -122,6 +120,21 @@ def generate_app(db_uri=AENEAS_DB_URI):
         else:
             jreports = [json.loads(r.raw) for r in reports]
             return json.dumps(jreports), 200
+
+    def clean_up_report(report):
+        jraw = json.loads(report.raw)
+        jraw['id'] = report.id
+        report.raw = json.dumps(jraw)
+        return report
+
+    @app.route('/v1.0/reports/clean-up-all', methods=['GET'])
+    def clean_up_all_reports():
+        reports = Report.query.all()
+        for report in reports:
+            clean_up_report(report)
+            db.session.add(report)
+        db.session.commit()
+        return redirect(url_for('list_reports'))
 
     @app.route('/v1.0/reports/<int:id>', methods=['GET'])
     def show_report(id):
