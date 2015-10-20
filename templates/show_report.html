@@ -7,6 +7,7 @@
         <tr><td>Version</td><td>{{ report.version|d }}</td></tr>
         <tr><td>Timestamp</td><td>{{ report.timestamp|d }}</td></tr>
         <tr><td></td><td><pre>{{ raw }}</pre></td></tr>
+        <tr><td></td><td><a href="{{ url_for('download_report', id=report.id) }}">Download</a></td></tr>
     </table>
 </div>
 {% endblock %}

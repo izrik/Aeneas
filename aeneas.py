@@ -101,7 +101,6 @@ def generate_app(db_uri=AENEAS_DB_URI):
         else:
             return None
 
-
     @app.route('/v1.0/reports', methods=['GET'])
     def list_reports():
         accept = get_accept_type()
@@ -129,6 +128,13 @@ def generate_app(db_uri=AENEAS_DB_URI):
         if accept == 'html':
             raw = json.dumps(json.loads(report.raw), indent=2)
             return render_template('show_report.html', report=report, raw=raw)
+        return json.dumps(dict(json.loads(report.raw), id=report.id)), 200
+
+    @app.route('/v1.0/reports/<int:id>/download', methods=['GET'])
+    def download_report(id):
+        report = Report.query.get(id)
+        if report is None:
+            return '', 404
         return json.dumps(dict(json.loads(report.raw), id=report.id)), 200
 
     return app
