@@ -69,7 +69,6 @@ def generate_app(db_uri=AENEAS_DB_URI):
         if request.content_type != 'application/json':
             return ('Content-Type was "{}", but only "application/json" is '
                     'supported.'.format(request.content_type), 415)
-        raw = request.data
         report_json = request.json
 
         if 'product' not in report_json:
@@ -83,6 +82,13 @@ def generate_app(db_uri=AENEAS_DB_URI):
         version = report_json['version']
         if not isinstance(version, basestring):
             return 'Version is wrong type', 400
+
+        if 'X-Real-IP' in request.headers:
+            report_json['server_remote_ip'] = request.headers['X-Real-IP']
+        else:
+            report_json['server_remote_ip'] = request.remote_addr
+
+        raw = json.dumps(report_json)
 
         report = Report(raw, product, version)
         db.session.add(report)
