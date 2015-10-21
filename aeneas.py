@@ -157,6 +157,14 @@ def generate_app(db_uri=AENEAS_DB_URI):
             return '', 404
         return report.raw, 200
 
+    @app.route('/v1.0/diagnostics/show-full-request')
+    def show_full_request():
+        req = request
+        # raise ZeroDivisionError
+        return render_template('show_full_request.html', request=request,
+                               keys=dir(request), getattr=getattr)
+
+
     return app
 
 

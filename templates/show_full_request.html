@@ -1,0 +1,53 @@
+{% extends "base.t.html" %}
+{% block title %}Request Diagnostics - Aeneas{% endblock %}
+{% block content scoped %}
+<pre class="diagnostics">
+<table>
+    <tr>
+        <td>Method</td>
+        <td>{{ request.method }}</td>
+    </tr>
+    <tr>
+        <td>URI</td>
+        <td>{{ request.url }}</td>
+    </tr>
+    <tr>
+        <td>Http Version</td>
+        <td>{{ request.http_version }}</td>
+    </tr>
+</table>
+Headers:
+<table>
+    {% for header in request.headers %}
+    <tr>
+        <td>{{ header[0] }}</td>
+        <td>{{ header[1] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+Body:
+    <p>{{ request.body if request.body != None }}</p>
+
+Environment Variables:
+<table>
+    {% for envvar in request.environ %}
+    <tr>
+        <td>{{ envvar }}</td>
+        <td>{{ request.environ[envvar] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+Request object:
+    <table>
+        {% for key in keys %}
+        <tr>
+            <td>{{ key }}</td>
+            <td>{{ getattr(request, key) }}</td>
+        </tr>
+        {% endfor %}
+        <tr></tr>
+    </table>
+
+    </pre>
+{% endblock %}
