@@ -31,12 +31,21 @@ except:
 
 AENEAS_DB_URI = environ.get('AENEAS_DB_URI', 'sqlite://')
 
+DEFAULT_AENEAS_MAX_CONTENT_LENGTH = 4000
+AENEAS_MAX_CONTENT_LENGTH = environ.get('AENEAS_MAX_CONTENT_LENGTH',
+                                        DEFAULT_AENEAS_MAX_CONTENT_LENGTH)
+try:
+    AENEAS_MAX_CONTENT_LENGTH = int(AENEAS_MAX_CONTENT_LENGTH)
+except:
+    AENEAS_MAX_CONTENT_LENGTH = DEFAULT_AENEAS_MAX_CONTENT_LENGTH
 
-def generate_app(db_uri=AENEAS_DB_URI):
+
+def generate_app(db_uri=AENEAS_DB_URI,
+                 max_content_length=AENEAS_MAX_CONTENT_LENGTH):
 
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-    app.config['MAX_CONTENT_LENGTH'] = 4000
+    app.config['MAX_CONTENT_LENGTH'] = max_content_length
     db = app.db = SQLAlchemy(app)
 
     class Report(db.Model):
@@ -56,7 +65,6 @@ def generate_app(db_uri=AENEAS_DB_URI):
                 timestamp = dparse(timestamp)
             self.timestamp = timestamp
 
-
         def to_dict(self):
             return {'id': self.id,
                     'raw': self.raw,
@@ -69,6 +77,9 @@ def generate_app(db_uri=AENEAS_DB_URI):
         if request.content_type != 'application/json':
             return ('Content-Type was "{}", but only "application/json" is '
                     'supported.'.format(request.content_type), 415)
+        if len(request.data) > app.config['MAX_CONTENT_LENGTH']:
+            return '', 413
+
         report_json = request.json
 
         if 'product' not in report_json:
@@ -170,7 +181,6 @@ def generate_app(db_uri=AENEAS_DB_URI):
         return render_template('show_full_request.html', request=request,
                                keys=dir(request), getattr=getattr)
 
-
     return app
 
 
@@ -197,6 +207,14 @@ if __name__ == '__main__':
     parser.add_argument('--create-db', help='Initialize the database schema '
                                             'and then exit.',
                         action='store_true')
+    parser.add_argument('--max-content-length',
+                        help='Limit the maximum size of an incoming request '
+                             'body that will be accepted. Default is {}. '
+                             'Environment variable is '
+                             'AENEAS_MAX_CONTENT_LENGTH'.format(
+                                AENEAS_MAX_CONTENT_LENGTH),
+                        action='store', default=AENEAS_MAX_CONTENT_LENGTH,
+                        type=int)
 
     args = parser.parse_args()
 
