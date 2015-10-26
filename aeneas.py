@@ -50,7 +50,7 @@ def generate_app(db_uri=AENEAS_DB_URI,
 
     class Report(db.Model):
         id = db.Column(db.Integer, primary_key=True)
-        raw = db.Column(db.String(4000), nullable=False)
+        raw = db.Column(db.String(8000), nullable=False)
         product = db.Column(db.String(100), nullable=False)
         version = db.Column(db.String(100), nullable=False)
         timestamp = db.Column(db.DateTime, nullable=False)
