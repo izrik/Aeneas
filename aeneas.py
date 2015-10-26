@@ -221,6 +221,7 @@ if __name__ == '__main__':
     print('Debug: {}'.format(args.debug))
     print('Port: {}'.format(args.port))
     print('DB URI: {}'.format(args.db_uri))
+    print('Max Content Length: {}'.format(args.max_content_length))
 
     app = generate_app(db_uri=args.db_uri,
                        max_content_length=args.max_content_length)
