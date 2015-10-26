@@ -59,7 +59,7 @@ def generate_app(db_uri=AENEAS_DB_URI,
             self.raw = raw
             self.product = product
             self.version = version
-            if timestamp == None:
+            if timestamp is None:
                 timestamp = datetime.datetime.utcnow()
             if isinstance(timestamp, basestring):
                 timestamp = dparse(timestamp)
